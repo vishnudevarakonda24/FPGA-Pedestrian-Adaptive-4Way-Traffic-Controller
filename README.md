@@ -15,7 +15,7 @@ Software-based traffic microcontrollers can experience task scheduling delays un
 
 The system architecture utilizes a deterministic, synchronous State Machine to handle safe lane transitions and pedestrian preemption routing:
 
-
+```
        ┌────────────────────────────────────────────────────────┐
        │                                                        │
        ▼                                                        │
@@ -35,6 +35,7 @@ The system architecture utilizes a deterministic, synchronous State Machine to h
 [ State 4: S_EW_Y ] ─────────────────────────┼──► YES ──────────┘
        │                                     │
        └─────────────────────────► NO ───────┘
+```
 
 ### 💡 Architectural Safety Controls
 * **Anti-Preemption Delays:** Pedestrian inputs do not interrupt a green light state directly. Instead, they are captured safely by a synchronous hardware latch, allowing active moving vehicles a full deceleration clearance window during the Yellow state before routing to a crossing phase.
