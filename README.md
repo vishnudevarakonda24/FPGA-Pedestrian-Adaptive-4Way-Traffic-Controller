@@ -15,7 +15,7 @@ Software-based traffic microcontrollers can experience task scheduling delays un
 
 The system architecture utilizes a deterministic, synchronous State Machine to handle safe lane transitions and pedestrian preemption routing:
 
-```text
+
        ┌────────────────────────────────────────────────────────┐
        │                                                        │
        ▼                                                        │
