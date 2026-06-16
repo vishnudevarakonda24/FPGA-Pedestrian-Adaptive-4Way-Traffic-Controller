@@ -10,6 +10,17 @@ Software-based traffic microcontrollers can experience task scheduling delays un
 - **State 3 (S_EW_G):** East-West green light active for 30 ticks.
 - **State 4 (S_EW_Y):** East-West yellow transition light active for 5 ticks. Evaluates pedestrian crossing latching flag upon exit.
 - **State 5 (S_EW_P):** Dedicated Pedestrian Walk interval active for 15 ticks if an external interrupt request was latched.
+[State 0: S_NS_G] ──(after 30s)──► [State 1: S_NS_Y] 
+       ▲                                  │
+       │                               (Is pedestrian button pressed?)
+ (after 15s)                             ├──► YES ──► [State 2: S_NS_P] (Pedestrian Walk)
+       │                                 └──► NO  ──┐
+       │                                            ▼
+[State 5: S_EW_P] ◄── YES ── (Is ped pressed?) ◄── [State 3: S_EW_G]
+       ▲                                            │
+       └─────────────────── NO ─────────────────────┘ (after 30s)
+                                                    ▼
+                                            [State 4: S_EW_Y]
 
 ## 🧪 Simulation and Verification
 The system architecture was compiled and verified using Questa-Sim. The structural testbench drives a continuous clock cycle to observe transitions under baseline loops, followed by dynamic asynchronous interrupt insertion to check the priority routing safety lanes.
