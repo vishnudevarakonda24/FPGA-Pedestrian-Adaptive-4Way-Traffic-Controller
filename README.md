@@ -11,17 +11,34 @@ Software-based traffic microcontrollers can experience task scheduling delays un
 - **State 4 (S_EW_Y):** East-West yellow transition light active for 5 ticks. Evaluates pedestrian crossing latching flag upon exit.
 - **State 5 (S_EW_P):** Dedicated Pedestrian Walk interval active for 15 ticks if an external interrupt request was latched.
   
-[State 0: S_NS_G] ──(after 30s)──► [State 1: S_NS_Y] 
-       ▲                                  │
-       │                               (Is pedestrian button pressed?)
- (after 15s)                             ├──► YES ──► [State 2: S_NS_P] (Pedestrian Walk)
-       │                                 └──► NO  ──┐
-       │                                            ▼
-[State 5: S_EW_P] ◄── YES ── (Is ped pressed?) ◄── [State 3: S_EW_G]
-       ▲                                            │
-       └─────────────────── NO ─────────────────────┘ (after 30s)
-                                                    ▼
-                                            [State 4: S_EW_Y]
+## ⚙️ Finite State Machine (FSM) Architecture Map
+
+The system architecture utilizes a deterministic, synchronous State Machine to handle safe lane transitions and pedestrian preemption routing:
+
+```text
+       ┌────────────────────────────────────────────────────────┐
+       │                                                        │
+       ▼                                                        │
+[ State 0: S_NS_G ] ──(after 30s)──► [ State 1: S_NS_Y ]        │ (after 15s)
+                                             │                  │
+                                   (Is Pedestrian Latch High?)  │
+                                             │                  │
+                                             ├──► YES ──► [ State 2: S_NS_P ]
+                                             │                  │
+                                             └──► NO  ──┐       │
+                                                        ▼       │
+[ State 3: S_EW_G ] ◄──(after 15s)─── [ State 5: S_EW_P ]       │
+       │                                     ▲                  │
+  (after 30s)                                │                  │
+       │                           (Is Pedestrian Latch High?)  │
+       ▼                                     │                  │
+[ State 4: S_EW_Y ] ─────────────────────────┼──► YES ──────────┘
+       │                                     │
+       └─────────────────────────► NO ───────┘
+
+### 💡 Architectural Safety Controls
+* **Anti-Preemption Delays:** Pedestrian inputs do not interrupt a green light state directly. Instead, they are captured safely by a synchronous hardware latch, allowing active moving vehicles a full deceleration clearance window during the Yellow state before routing to a crossing phase.
+* **Deterministic Timing Blocks:** Counters reset to zero dynamically on state transitions using ternary comparison matching to eliminate timer spillover bugs across cycles.
 
 ## 🧪 Simulation and Verification
 The system architecture was compiled and verified using Questa-Sim. The structural testbench drives a continuous clock cycle to observe transitions under baseline loops, followed by dynamic asynchronous interrupt insertion to check the priority routing safety lanes.
