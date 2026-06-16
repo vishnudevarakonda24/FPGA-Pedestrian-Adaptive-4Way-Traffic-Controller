@@ -1,5 +1,6 @@
 # FPGA-Pedestrian-Adaptive-4Way-Traffic-Controller
-"A deterministic, time-parameterized Finite State Machine (FSM) implemented in Verilog HDL for 4-way intersection traffic regulation with priority-based pedestrian crossing logic."
+"Developed an intricate finite state machine controlling red, yellow, green, and pedestrian states at fourway
+intersections"
 ## 🎯 Motivation & Engineering Purpose
 Software-based traffic microcontrollers can experience task scheduling delays under heavy traffic simulation loads, leading to unpredictable timing errors. This project transitions the intersection management pipeline into dedicated FPGA hardware logic. The system uses a synchronous FSM to ensure fixed-interval switching times, safe inter-state delays (Yellow clearance windows), and an auto-latching pedestrian crossing mechanism that prevents signal deadlocks.
 
